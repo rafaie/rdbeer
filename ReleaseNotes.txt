@@ -1,0 +1,111 @@
+
+Version 1.2 5/16/17
+
+Now includes a second example involving a visually-guided agent based on the model
+in the following paper (thanks to Matthew Setzler for this implementation):
+
+Beer, R.D. (2003). The dynamics of active categorical perception in an evolved 
+model agent. Adaptive Behavior 11(4):209-243. 
+
+================================================================================
+
+Version 1.1.5 5/28/15
+
+The best individual is now updated every generation if the ReEvalFlag is set 
+rather than only when the best performance improves (Thanks to Eduardo Izquierdo
+for this fix) 
+
+================================================================================
+
+Version 1.1.4 2/13/15
+
+Added brief discussions of mutation variance selection and population sizing for
+multithreaded search to the documentation. 
+
+================================================================================
+
+Version 1.1.3 7/2/12
+
+Fixed a bug in the initialization of random states when populations are resized
+(Thanks to Marc Dillon for finding this bug)
+
+================================================================================
+
+Version 1.1.2 6/16/09
+
+Fixed a bug where the random states for each individual in a population weren't
+being seeded with as wide a range of seeds as they should have been (Thanks to
+Seth Frey for finding this bug)
+
+================================================================================
+
+Version 1.1.1 - 3/8/08
+
+Fixed a bug where random states written to streams weren't saving information
+related to Gaussian random variables (Thanks to Chad Seys for pointing out this
+bug)
+
+================================================================================
+
+Version 1.1 - 2/16/08
+
+There are two major changes in this release, both aimed at substantially
+increasing the speed of execution of an evolutionary search. The first change is
+isolated to the CTRNN class, while the second impacts several different
+components.
+
+
+FAST SIGMOIDAL FUNCTION
+
+This release includes a new fast sigmoid option which considerably speeds up the
+numerical integration of CTRNNs. The fast sigmoid implementation uses a
+table-based method with linear interpolation between table entries. This option
+can be enabled by uncommenting the "#define FAST_SIGMOID" line in ctrnn.h.
+
+The accuracy of the approximation is controlled by the constants SigTabRange and
+SigTabSize.  SigTabRange determines the range over which the approximation
+occurs.  For example, the default value of 15.0 means that the range of
+fastsigmoid(x) is [-15,15], with a value of 0.0 for x < -15 and a value of 1.0
+for x > 15.  The constant SigTabSize determines the number of table entries
+used. Note that the table only holds values of sigmoid(x) for 0 <= x <=
+SigTabRange, since sigmoid(x) = 1 - sigmoid(-x) for negative values of x.
+
+
+MULTITHREADED SEARCH
+
+This release also includes the capability for multithreaded evaluation of
+populations on multicore/multiprocessor machines. This capability makes use of
+the pthread library, so it can only be used on systems for which this library is
+available. Threaded evaluation can be enabled by uncommenting the line "#define
+THREADED_SEARCH" in search.h. The number of evaluation threads to use is
+specified by the THREAD_COUNT symbol in search.h, which defaults to 2.
+
+Once individuals in a population can be evaluated in parallel, it becomes
+essential that evaluation is thread-safe. The most important change that this
+requires in TSearch is that a separate random state must be maintained for each
+individual in the population, so that the search code can guarantee that the
+same result will be obtained for a given random seed no matter how many threads
+are used. This requirement has several consequences.
+
+First, random states are now encapsulated into instances of the RandomState
+class, and all of the functions previously declared in random.h now become
+methods of this class.
+
+Second, TSearch now maintains its own random state for randomizing the initial
+population, seeding the random states of each individual, selection, mutation,
+etc. The seed for this random state can be set using the new SetRandomSeed()
+method defined on the TSearch class.
+
+Third, a random state is now passed as a second argument to all user evaluation
+functions. Any randomization that the evaluation function does should use this
+random state.
+
+Fourth, the RandomizeState() and RandomizeOutputs() methods of the CTRNN class,
+as well as the Reset() method of the LeggedAgent class, now accept a new random
+state argument, which they use to perform the requested randomization.
+
+Finally, it is the responsibility of a user of TSearch to ensure that any
+evaluation function they write is thread-safe (i.e., user evaluation functions
+must maintain no global state).
+
+================================================================================
