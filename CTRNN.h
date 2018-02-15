@@ -1,7 +1,7 @@
 // ***********************************************************
 // A class for continuous-time recurrent neural networks
 //
-// RDB 
+// RDB
 //  8/94 Created
 //  12/98 Optimized integration
 //  1/08 Added table-based fast sigmoid w/ linear interpolation
@@ -27,7 +27,7 @@ const double SigTabRange = 15.0;
 double fastsigmoid(double x);
 #endif
 
-inline double sigma(double x) 
+inline double sigma(double x)
 {
   return 1/(1 + exp(-x));
 }
@@ -58,17 +58,20 @@ class CTRNN {
         CTRNN(int newsize = 0);
         // The destructor
         ~CTRNN();
-        
+
+        // Show the Cells
+        void PrintModel(void);
+
         // Accessors
         int CircuitSize(void) {return size;};
         void SetCircuitSize(int newsize);
         double NeuronState(int i) {return states[i];};
         double &NeuronStateReference(int i) {return states[i];};
-        void SetNeuronState(int i, double value) 
+        void SetNeuronState(int i, double value)
             {states[i] = value;outputs[i] = sigmoid(gains[i]*(states[i] + biases[i]));};
         double NeuronOutput(int i) {return outputs[i];};
         double &NeuronOutputReference(int i) {return outputs[i];};
-        void SetNeuronOutput(int i, double value) 
+        void SetNeuronOutput(int i, double value)
             {outputs[i] = value; states[i] = InverseSigmoid(value)/gains[i] - biases[i];};
         double NeuronBias(int i) {return biases[i];};
         void SetNeuronBias(int i, double value) {biases[i] = value;};
@@ -81,7 +84,7 @@ class CTRNN {
         void SetNeuronExternalInput(int i, double value) {externalinputs[i] = value;};
         double ConnectionWeight(int from, int to) {return weights[from][to];};
         void SetConnectionWeight(int from, int to, double value) {weights[from][to] = value;};
-        void LesionNeuron(int n) 
+        void LesionNeuron(int n)
         {
             for (int i = 1; i<= size; i++) {
                 SetConnectionWeight(i,n,0);
@@ -93,7 +96,7 @@ class CTRNN {
         // Input and output
         friend ostream& operator<<(ostream& os, CTRNN& c);
         friend istream& operator>>(istream& is, CTRNN& c);
-                            
+
         // Control
         void RandomizeCircuitState(double lb, double ub);
         void RandomizeCircuitState(double lb, double ub, RandomState &rs);
@@ -101,10 +104,11 @@ class CTRNN {
         void RandomizeCircuitOutput(double lb, double ub, RandomState &rs);
         void EulerStep(double stepsize);
         void RK4Step(double stepsize);
-		
+
         int size;
         TVector<double> states, outputs, biases, gains, taus, Rtaus, externalinputs;
         TMatrix<double> weights;
         TVector<double> TempStates,TempOutputs,k1,k2,k3,k4;
-};
 
+
+};
