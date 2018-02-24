@@ -5,6 +5,7 @@
 // ****************************
 
 #include <cmath>
+#include <iostream>
 
 // A visual ray – line segment of form y = mx + b with start coordinates and length
 
@@ -45,6 +46,14 @@ class VisualObject {
       cy += StepSize * vy;
     };
 
+    void Print(){
+      cout <<"VisualObject = " << this->WhoAmI() << ", cx = " << cx << ", cy= " << cy << ", vy = " << vy << ", size= " << size << endl;
+    }
+
+    string virtual WhoAmI(){
+      return "VisualObject";
+    }
+
   protected:
     double cx,cy,vy,size;
 };
@@ -56,7 +65,7 @@ class Line : public VisualObject {
 public:
   // The constructor
   // size --> length of segment
-  Line(double ix = 0.0, double iy = 275.0, double vy_ = -3.0, double size_ = 30.0) 
+  Line(double ix = 0.0, double iy = 275.0, double vy_ = -3.0, double size_ = 30.0)
     : VisualObject(ix,iy,vy_,size_) {};
 
   // The deconstructor
@@ -77,6 +86,11 @@ public:
     double new_length = sqrt(pow(x_intersect-ray.startX, 2.0) + pow(cy-ray.startY, 2.0));
     if (new_length < ray.length) ray.length = new_length;
   };
+
+  string WhoAmI(){
+    return "Line";
+  }
+
 };
 
 
@@ -133,4 +147,9 @@ public:
     }
     if (new_length < ray.length) ray.length = new_length;
   };
+
+  string WhoAmI(){
+    return "Circle";
+  }
+
 };
