@@ -21,7 +21,7 @@ const double VelGain = 5;
 
 class VisualAgent {
 	public:
-		// The constructor 
+		// The constructor
 		VisualAgent(double ix = 0.0, double iy = 0.0, int NumRays_ = 7) {
 			NumRays = NumRays_;
 			Rays.SetBounds(1, NumRays);
@@ -39,7 +39,7 @@ class VisualAgent {
 		// Control
 		void Reset(double ix, double iy, int randomize = 0);
     void Reset(RandomState &rs, double ix, double iy, int randomize);
-		void Step(double StepSize, VisualObject &object);
+		void Step(double StepSize, VisualObject &object, bool showDetails=false);
 
 		CTRNN NervousSystem;
 

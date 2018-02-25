@@ -63,19 +63,23 @@ void VisualAgent::ResetRays() {
 
 // Step the agent
 
-void VisualAgent::Step(double StepSize, VisualObject &object) {
+void VisualAgent::Step(double StepSize, VisualObject &object, bool showDetails) {
   // Update visual sensors and check inputs
   ResetRays();
-  cout << "--------------------------" << endl;
+  if (showDetails) cout << "--------------------------" << endl;
+
   for (int i=1; i<=NumRays; i++) {
     object.RayIntersection(Rays[i]);
     double external_input = InputGain*(MaxRayLength - Rays[i].length)/MaxRayLength;
-    cout << "=====>" << i << "  " << external_input << endl;
-    cout << "Ray, b= " << Rays[i].b << ", m = "<< Rays[i].m << ", startX = "
-         << Rays[i].startX << ", startY = "<< Rays[i].startY << ", length = "
-         << Rays[i].length  << endl;
-    cout << "Object :";
-    object.Print();
+    if (showDetails)
+    {
+      cout << "=====>" << i << "  " << external_input << endl;
+      cout << "Ray, b= " << Rays[i].b << ", m = "<< Rays[i].m << ", startX = "
+           << Rays[i].startX << ", startY = "<< Rays[i].startY << ", length = "
+           << Rays[i].length  << endl;
+      cout << "Object :";
+      object.Print();
+    }
     NervousSystem.SetNeuronExternalInput(i, external_input);
   }
 
