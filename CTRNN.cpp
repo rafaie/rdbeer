@@ -17,6 +17,7 @@
 #include "CTRNN.h"
 #include "random.h"
 #include <stdlib.h>
+#include <sstream>
 
 
 // A fast sigmoid implementation using a table w/ linear interpolation
@@ -145,7 +146,10 @@ void CTRNN::EulerStep(double stepsize)
     double input = externalinputs[i];
     for (int j = 1; j <= size; j++)
       input += weights[j][i] * outputs[j];
+    double ll = states[i];
     states[i] += stepsize * Rtaus[i] * (input - states[i]);
+    cout << "---> " << i << " "<< stepsize << " "<< input << " "<< states[i]
+         << " "<< Rtaus[i] << " "<<  ll << endl;
   }
   // Update the outputs of all neurons.
   for (int i = 1; i <= size; i++)
@@ -235,6 +239,34 @@ void CTRNN::PrintModel(void)
     cout << "\n-----------------------------------------\n";
   }
 }
+
+void CTRNN::PrintModelAbstract(void)
+{
+  stringstream outputStr, tausStr, rTausStr, biasesStr, gainStr, weightsStr,
+      externalinputStr, statStr;
+  for (int i = 1; i <= size; ++i){
+    outputStr << outputs[i] << ",";
+    tausStr << taus[i] << ",";
+    rTausStr << Rtaus[i] << ",";
+    biasesStr << biases[i] << ",";
+    gainStr << gains[i] << ",";
+    externalinputStr << externalinputs[i] << ",";
+    statStr << states[i] << ",";
+    for (int j=1; j <= size; ++j){
+      weightsStr << weights[i][j] << ",";
+    }
+    weightsStr << endl;
+  }
+  cout << "Output:"<<outputStr.str() << endl;
+  cout << "taus:"<<tausStr.str() << endl;
+  cout << "Rtaus:"<<rTausStr.str() << endl;
+  cout << "biases:"<<biasesStr.str() << endl;
+  cout << "gain:"<<gainStr.str() << endl;
+  cout << "external_inputs:"<< externalinputStr.str() << endl;
+  cout << "stats:"<< statStr.str() << endl;
+  cout << "weights:\n"<<weightsStr.str();
+}
+
 // ****************
 // Input and Output
 // ****************

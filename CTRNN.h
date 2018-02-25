@@ -61,6 +61,7 @@ class CTRNN {
 
         // Show the Cells
         void PrintModel(void);
+        void PrintModelAbstract(void);
 
         // Accessors
         int CircuitSize(void) {return size;};
